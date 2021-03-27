@@ -80,8 +80,9 @@ dependencies {
 
   // Logging framework. More details - http://logback.qos.ch/
   implementation("ch.qos.logback:logback-classic")
+    implementation("junit:junit:4.12")
 
-  // We use JWT Authentication (Micronaut has a built-in support for it)
+    // We use JWT Authentication (Micronaut has a built-in support for it)
   // Details - https://guides.micronaut.io/micronaut-security-jwt/guide/index.html
   annotationProcessor("io.micronaut.security:micronaut-security-annotations")
   implementation("io.micronaut.security:micronaut-security-jwt")
