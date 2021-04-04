@@ -1,13 +1,10 @@
 package edu.kpi.testcourse.propertybased;
 
-import com.google.gson.JsonObject;
-import com.nimbusds.jose.shaded.json.JSONObject;
-import com.nimbusds.jose.shaded.json.parser.JSONParser;
-import com.nimbusds.jose.shaded.json.parser.ParseException;
 import edu.kpi.testcourse.bigtable.BigTableImpl;
 import edu.kpi.testcourse.logic.UserActions;
 import edu.kpi.testcourse.model.User;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
@@ -46,10 +43,10 @@ public class UserActionsTestPropertyBased {
 
     qt()
       .forAll(
-        strings().allPossible().ofLengthBetween(15, 25),
-        strings().allPossible().ofLengthBetween(15, 25),
-        strings().allPossible().ofLengthBetween(15, 25),
-        strings().allPossible().ofLengthBetween(15, 25)
+        strings().basicLatinAlphabet().ofLengthBetween(15, 25),
+        strings().basicLatinAlphabet().ofLengthBetween(15, 25),
+        strings().basicLatinAlphabet().ofLengthBetween(15, 25),
+        strings().basicLatinAlphabet().ofLengthBetween(15, 25)
       ).check((short1, short2, short3, short4) -> {
       user.initiateUrlList();
       user.addUrlToUrlArray(short1);
@@ -88,7 +85,7 @@ public class UserActionsTestPropertyBased {
 
     qt()
       .forAll(
-        strings().allPossible().ofLengthBetween(20, 30)
+        strings().basicLatinAlphabet().ofLengthBetween(20, 30)
       ).check((key) -> {
 
       BigTableImpl bigTable = new BigTableImpl();
