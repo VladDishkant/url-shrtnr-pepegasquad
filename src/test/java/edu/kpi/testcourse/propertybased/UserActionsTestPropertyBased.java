@@ -26,7 +26,7 @@ public class UserActionsTestPropertyBased {
    *
    * Method create new user, create asserts: try to find user by email and check if exist user in
    * database (object of class 'BigTableImpl')
-   * Finally we add 4 short url to user 'urlList' as random between 10 and 25 symbols, then delete first and third
+   * Finally we add 4 short url to user 'urlList' as random between 15 and 25 symbols, then delete first and third
    * and return true if in the end we have second and fourth short url in 'urlList' of user
    *
    * @throws Exception our error
@@ -41,27 +41,17 @@ public class UserActionsTestPropertyBased {
     user.setUuid(UUID.randomUUID().toString());
     UserActions.createUser(user);
 
-    //    DON'T WORK METHODS: signUp, signIn
-    //    JSONObject jsonObject = new JSONObject();
-    //    jsonObject.put("email", "admin123@gmail.com");
-    //    jsonObject.put("password", "qwerty123");
-    //    jsonObject.put("urlList", new ArrayList<String>());
-    //
-    //    usersController.signUp(jsonObject);
-    //    assertThat(UserActions.findUserByEmail(email)).isEqualTo(true);
-    //
-    //    usersController.signIn(jsonObject);
-
     assertThat(UserActions.findUserByEmail(email)).isEqualTo(true);
     assertThat(UserActions.retrieveUserByEmail(email)).isEqualTo(user);
 
     qt()
       .forAll(
-        strings().basicLatinAlphabet().ofLengthBetween(10, 25),
-        strings().basicLatinAlphabet().ofLengthBetween(10, 25),
-        strings().basicLatinAlphabet().ofLengthBetween(10, 25),
-        strings().basicLatinAlphabet().ofLengthBetween(10, 25)
+        strings().allPossible().ofLengthBetween(15, 25),
+        strings().allPossible().ofLengthBetween(15, 25),
+        strings().allPossible().ofLengthBetween(15, 25),
+        strings().allPossible().ofLengthBetween(15, 25)
       ).check((short1, short2, short3, short4) -> {
+      user.initiateUrlList();
       user.addUrlToUrlArray(short1);
       user.addUrlToUrlArray(short2);
       user.addUrlToUrlArray(short3);
@@ -73,7 +63,7 @@ public class UserActionsTestPropertyBased {
       ArrayList<String> urlListTest = new ArrayList<>();
       Collections.addAll(urlListTest, short2, short4);
 
-      return user.getUrlList().toArray() == urlListTest.toArray();
+      return user.getUrlList().toString().equals(urlListTest.toString());
       });
   }
 
@@ -88,28 +78,23 @@ public class UserActionsTestPropertyBased {
    */
   @Test
   void putUser_getUser_propertyBased() throws Exception {
-    JSONObject jsonObject = new JSONObject();
-    JSONParser jsonParser = new JSONParser();
+    String email = "admin567@gmail.com";
+    String password = "qwerty567";
+    ArrayList<String> urlList = new ArrayList<>();
+
+    User user = new User(email, password, urlList);
+    user.setUuid(UUID.randomUUID().toString());
+    UserActions.createUser(user);
 
     qt()
       .forAll(
-        strings().basicLatinAlphabet().ofLengthBetween(20, 30),
-        strings().basicLatinAlphabet().ofLengthBetween(20, 30),
-        strings().basicLatinAlphabet().ofLengthBetween(8, 15)
-      ).check((key, email, password) -> {
-        jsonObject.put("email", email);
-        jsonObject.put("password", password);
-        jsonObject.put("urlList", new ArrayList<String>());
+        strings().allPossible().ofLengthBetween(20, 30)
+      ).check((key) -> {
 
       BigTableImpl bigTable = new BigTableImpl();
+      bigTable.putUser(key, user.toJson());
 
-      try {
-        bigTable.putUser(key, (JsonObject) jsonParser.parse(jsonObject.toString()));
-      } catch (ParseException e) {
-        e.printStackTrace();
-      }
-
-      return bigTable.getUser(key).toString().equals(jsonObject.toString());
+      return bigTable.getUser(key).toString().equals(user.toJson().toString());
     });
   }
 }
